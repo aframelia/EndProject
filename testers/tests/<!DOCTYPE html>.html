@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Overview Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #eaeaea;
+      padding-bottom: 10px;
+    }
+    .header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+    .header .info {
+      flex-grow: 1;
+      margin-left: 20px;
+    }
+    .header .info h2 {
+      margin: 0;
+      color: #333;
+    }
+    .header .info p {
+      margin: 4px 0;
+      color: #777;
+    }
+    .alert {
+      background-color: #ffefef;
+      border-left: 5px solid #ff4d4d;
+      padding: 10px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .section {
+      margin: 20px 0;
+    }
+    .section h3 {
+      margin: 0 0 10px 0;
+      color: #555;
+    }
+    .card {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    .buttons button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .buttons button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Patient Header -->
+    <div class="header">
+      <img src="patient-photo-placeholder.jpg" alt="Patient Photo">
+      <div class="info">
+        <h2>John Doe</h2>
+        <p>Age: 45 | Male</p>
+        <p>Patient ID: #123456</p>
+        <p>Current Location: Room 405</p>
+      </div>
+    </div>
+
+    <!-- Vital Alerts -->
+    <div class="alert">
+      <strong>Critical Alert:</strong> Severe penicillin allergy. Monitor closely for drug interactions.
+    </div>
+
+    <!-- Recent Vitals -->
+    <div class="section">
+      <h3>Recent Vitals</h3>
+      <div class="card">
+        <p><strong>Blood Pressure:</strong> 120/80 mmHg</p>
+        <p><strong>Heart Rate:</strong> 72 bpm</p>
+        <p><strong>Oxygen Saturation:</strong> 98%</p>
+        <p><strong>Temperature:</strong> 37.1°C</p>
+      </div>
+    </div>
+
+    <!-- Chief Complaint -->
+    <div class="section">
+      <h3>Reason for Visit</h3>
+      <div class="card">
+        <p>Follow-up for hypertension and diabetes management.</p>
+      </div>
+    </div>
+
+    <!-- Medications -->
+    <div class="section">
+      <h3>Current Medications</h3>
+      <div class="card">
+        <ul>
+          <li>Metformin 500mg - Twice daily</li>
+          <li>Lisinopril 10mg - Once daily</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Medical History -->
+    <div class="section">
+      <h3>Problem List / Medical History</h3>
+      <div class="card">
+        <ul>
+          <li>Hypertension (Diagnosed: 2015)</li>
+          <li>Type 2 Diabetes (Diagnosed: 2018)</li>
+          <li>Heart Attack (Occurred: 2020)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Lab Results -->
+    <div class="section">
+      <h3>Recent Lab Results</h3>
+      <div class="card">
+        <p><strong>HbA1c:</strong> 7.8% (Flagged: High)</p>
+        <p><strong>Cholesterol:</strong> 210 mg/dL</p>
+        <p><strong>eGFR:</strong> 60 mL/min/1.73m²</p>
+      </div>
+    </div>
+
+    <!-- Actionable Buttons -->
+    <div class="buttons">
+      <button>Add Notes</button>
+      <button>Order Labs</button>
+      <button>Prescribe Medication</button>
+      <button>Message Patient</button>
+    </div>
+  </div>
+</body>
+</html>
