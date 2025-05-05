@@ -1,0 +1,38 @@
+# Node modules (React frontend)
+node_modules/
+build/
+dist/
+
+# Python virtual environment
+venv/
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+.env
+
+# VSCode settings
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# Logs
+*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Database files
+*.sqlite3
+*.db
+
+# React environment files
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Jupyter notebooks (if using)
+.ipynb_checkpoints/
