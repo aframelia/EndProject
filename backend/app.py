@@ -3,19 +3,11 @@ from flask import Flask, request, jsonify
 import sqlite3
 import random
 from flask_cors import CORS
-# Replace this line at the top of app.py:
-# from werkzeug.urls import url_quote
-
-# # With:
-# try:
-#     from werkzeug.urls import url_quote
-# except ImportError:
-#     from werkzeug.utils import quote as url_quote
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for React frontend
+CORS(app)  # Too help the frontend to send requests to the flask application. Basically to communicate between front and back ends. 
 
-# Initialize database
+# Create the database where to store the medical terms oonce they are acceptd. 
 def init_db():
     conn = sqlite3.connect('clinical_terms.db')
     c = conn.cursor()
@@ -30,7 +22,7 @@ def init_db():
 
 init_db()
 
-# Dummy medical terms and their types
+# Dummy medical terms.
 MEDICAL_TERMS = [
     {"text": "hypertension", "type": "condition"},
     {"text": "diabetes", "type": "condition"},
