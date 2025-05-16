@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import uuid
 import sqlite3
 import random
 from flask_cors import CORS
@@ -6,16 +7,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Initialize database with improved schema
 def init_db():
     conn = sqlite3.connect('clinical_terms.db')
     c = conn.cursor()
     
-    # Drop existing tables if they exist (clean start)
     c.execute('''DROP TABLE IF EXISTS patient_documents''')
     c.execute('''DROP TABLE IF EXISTS terms''')
     
-    # Create fresh tables with correct schema
     c.execute('''CREATE TABLE IF NOT EXISTS patient_documents
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                  patient_id TEXT NOT NULL,
@@ -33,7 +31,6 @@ def init_db():
                  patient_id TEXT NOT NULL,
                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     
-    # Create indexes
     c.execute('''CREATE INDEX IF NOT EXISTS idx_terms_patient ON terms(patient_id)''')
     c.execute('''CREATE INDEX IF NOT EXISTS idx_terms_status ON terms(status)''')
     
@@ -42,7 +39,6 @@ def init_db():
 
 init_db()
 
-# Dummy medical terms for the extraction demo
 MEDICAL_TERMS = [
     {"text": "hypertension", "type": "condition"},
     {"text": "diabetes", "type": "condition"},
@@ -54,8 +50,44 @@ MEDICAL_TERMS = [
     {"text": "headache", "type": "symptom"},
 ]
 
+
 @app.route('/extract', methods=['POST'])
 def extract_terms():
+    data = request.json
+    clinical_note = data.get('clinical_note', '')
+    patient_id = data.get('patient_id', '')
+    
+    if not patient_id:
+        return jsonify({"status": "error", "message": "patient_id is required"}), 400
+    
+    try:
+        # Call nlp Flask backend
+        nlp_response = requests.post(
+            "http://localhost:5002/extract",
+            json={"clinical_note": clinical_note},
+            timeout=10
+        )
+        nlp_response.raise_for_status()
+        labels = nlp_response.json()  # Expected: [("Diabetes mellitus", "C0011849"), ...] or strings
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"NLP extraction failed: {str(e)}"}), 500
+
+    # Normalize and transform output
+    extracted_terms = []
+    for label in labels:
+        term = label[0] if isinstance(label, (tuple, list)) else str(label)
+        cui = label[1] if isinstance(label, (tuple, list)) and len(label) > 1 else None
+
+        extracted_terms.append({
+            "text": term,
+            "type": "condition",  # Can adjust with logic later
+            "patient_id": patient_id,
+            "id": f"nlp-{uuid.uuid4().hex[:8]}",
+            "cui": cui
+        })
+
+    return jsonify(extracted_terms)
+
     data = request.json
     clinical_note = data.get('clinical_note', '')
     patient_id = data.get('patient_id', '')
@@ -99,7 +131,6 @@ def accept_term():
     conn = sqlite3.connect('clinical_terms.db')
     c = conn.cursor()
     
-    # Check if term already exists for this patient
     c.execute("""SELECT id FROM terms 
                  WHERE text=? AND type=? AND patient_id=?""",
               (term_data['text'], term_data['type'], term_data['patient_id']))
@@ -108,7 +139,6 @@ def accept_term():
         conn.close()
         return jsonify({"status": "error", "message": "Term already exists for patient"}), 400
     
-    # Insert new term
     c.execute("""INSERT INTO terms 
                 (text, type, status, patient_id) 
                 VALUES (?, ?, 'accepted', ?)""",
@@ -137,11 +167,9 @@ def get_accepted_terms():
     c = conn.cursor()
     
     if patient_id:
-        # Get terms for specific patient
         c.execute("""SELECT text, type FROM terms 
                      WHERE status='accepted' AND patient_id=?""", (patient_id,))
     else:
-        # Get all accepted terms
         c.execute("SELECT text, type FROM terms WHERE status='accepted'")
     
     terms = [{"text": row[0], "type": row[1]} for row in c.fetchall()]
@@ -160,15 +188,12 @@ def save_document():
         conn = sqlite3.connect('clinical_terms.db')
         c = conn.cursor()
         
-        # Check if patient exists and get their name
         c.execute("""SELECT patient_name FROM patient_documents 
                      WHERE patient_id = ? LIMIT 1""", (data['patientId'],))
         existing_patient = c.fetchone()
         
-        # Use existing name if patient exists, otherwise use provided name
         patient_name = existing_patient[0] if existing_patient else data['patientName']
         
-        # Insert new document
         c.execute("""INSERT INTO patient_documents 
                     (patient_id, patient_name, document_name, document_content, document_type)
                     VALUES (?, ?, ?, ?, ?)""",
@@ -186,7 +211,6 @@ def get_patients():
     conn = sqlite3.connect('clinical_terms.db')
     c = conn.cursor()
     
-    # Get unique patients and their documents
     c.execute('''SELECT DISTINCT patient_id, patient_name FROM patient_documents''')
     patients = []
     
@@ -202,7 +226,7 @@ def get_patients():
                 "name": doc_name,
                 "content": doc_content,
                 "type": doc_type,
-                "date": created_at.split()[0]  # Just the date part
+                "date": created_at.split()[0]  
             })
         
         patients.append({
@@ -226,10 +250,8 @@ def create_patient():
         conn = sqlite3.connect('clinical_terms.db')
         c = conn.cursor()
         
-        # Generate a patient ID
         patient_id = f"P{random.randint(1000, 9999)}"
         
-        # Create an initial empty document to establish the patient
         c.execute("""INSERT INTO patient_documents 
                     (patient_id, patient_name, document_name, document_content, document_type)
                     VALUES (?, ?, ?, ?, ?)""",

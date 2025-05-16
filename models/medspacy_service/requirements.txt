@@ -1,0 +1,5 @@
+flask
+medspacy==0.1.0.1
+spacy==3.7.2
+gunicorn
+medspacy_quickumls @ git+https://github.com/medspacy/medspacy_quickumls.git
