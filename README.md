@@ -32,6 +32,16 @@ npm install
 npm start
 ```
 
+### NLP Setup (Docker)
+
+```bash
+# From the nlp_gpt_app directory:
+docker build -t <nlp_service_name> .
+
+# Run the container on port 5002
+docker run -d -p 5002:5002 --name nlp_service_name nlp_service_name
+```
+
 ## Key Features
 
 - **Patient Page**: Create patient and adds new note
