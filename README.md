@@ -11,7 +11,7 @@ This project was developed as part of my final-year studies at Birkbeck Universi
 
 ### Demo
 
-[▶️ Watch Demo Video](./demo.mp4)
+![Demo of the project](./demo.gif)
 
 
 ### Backend Setup (Flask)
